@@ -11,13 +11,12 @@ def server():
 
     serv.listen(1)
 
-    conn, addr = serv.accept()
-
     while True:
+        conn, addr = serv.accept()
         try:
             buffer_length = 10
             echo = u''
-            while echo[-4:] != u"\r\n":
+            while echo[-2:] != u"\r\n":
                 part = conn.recv(buffer_length)
                 echo += part.decode('utf8')
                 print("Received: ", part)
@@ -25,7 +24,7 @@ def server():
             print("Sending: ", echo)
             conn.sendall(echo.encode('utf8'))
             print('waiting')
-            conn, addr = serv.accept()
+            conn.close()
 
         except KeyboardInterrupt:
             print("Shutting down server.")
