@@ -6,7 +6,7 @@ import socket
 
 def server():
     serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
-    address = ('127.0.0.1', 5003)
+    address = ('127.0.0.1', 5008)
     serv.bind(address)
 
     serv.listen(1)
@@ -19,10 +19,13 @@ def server():
             echo = ''
             rec = True
             while rec:
-                part = conn.recv(buffer_length)
-                echo += part.decode('utf8')
-                if len(part) < buffer_length:
+                try:
+                    part = conn.recv(buffer_length)
+                    echo += part.decode('utf8')
+                    print("Received: ", part)
+                except socket.error:
                     rec = False
+
             print("Sending: ", echo)
             conn.sendall(echo.encode('utf8'))
             print('waiting')
