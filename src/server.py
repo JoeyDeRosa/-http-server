@@ -13,15 +13,20 @@ def server():
 
     conn, addr = serv.accept()
 
-    buffer_length = 10
-    echo = ''
     while True:
-        part = conn.recv(buffer_length)
-        echo += part.decode('utf8')
-        if len(part) < buffer_length:
+        try:
+            buffer_length = 10
+            echo = ''
+            rec = True
+            while rec:
+                part = conn.recv(buffer_length)
+                echo += part.decode('utf8')
+                if len(part) < buffer_length:
+                    rec = False
+            print("Sending: ", echo)
+            conn.sendall(echo.encode('utf8'))
+            print('waiting')
+            conn, addr = serv.accept()
+        except KeyboardInterrupt:
             break
-
-    print("Sending: ", echo)
-    conn.sendall(echo.encode('utf8'))
     conn.close()
-    serv.close()
