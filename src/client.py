@@ -11,6 +11,8 @@ def client(message):
     clnt = socket.socket(*stream_info[:3])
     clnt.connect(stream_info[-1])
 
+    if len(message) % 10 is 0:
+        message += '~'
     clnt.sendall(message.encode('utf8'))
 
     buffer_length = 10

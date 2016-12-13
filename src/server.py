@@ -20,9 +20,13 @@ def server():
             rec = True
             while rec:
                 part = conn.recv(buffer_length)
+                print(type(part.decode('utf8')))
                 echo += part.decode('utf8')
-                if len(part) < buffer_length:
+                if len(part) < buffer_length or len(part) is 0:
                     rec = False
+            if echo[-1] is '~' and (len(echo) - 1) % 10 is 0:
+                fix_str = echo[:-1]
+                echo = fix_str
             print("Sending: ", echo)
             conn.sendall(echo.encode('utf8'))
             print('waiting')
