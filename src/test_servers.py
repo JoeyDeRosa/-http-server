@@ -10,7 +10,7 @@ def test_client_short():
     """Test with message shorter than one buffer length."""
     from client import client
     test_msg = "twerp"
-    assert client(test_msg) == u"twerp"
+    return client(test_msg) == u"twerp"
 
 def test_client_long():
     """Test with message longer than several buffers in length."""
@@ -21,9 +21,11 @@ def test_client_long():
 def test_client_exact_buffer():
     """Test messages that are an exact multiple of one buffer in length."""
     from client import client
+    test_msg = "abcdefghij"
+    return len(client(test_msg)) == 10
 
 
 def test_client_non_ASCII():
     """Test messages that contain non ASCII characters."""
     from client import client
-    
+

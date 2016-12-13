@@ -5,19 +5,23 @@ import socket
 
 
 def server():
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
+    serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
     address = ('127.0.0.1', 5000)
-    server.bind(address)
+    serv.bind(address)
 
-    server.listen(1)
+    serv.listen(1)
 
-    conn, addr = server.accept()
+    conn, addr = serv.accept()
 
     buffer_length = 10
     echo = ''
     while True:
-        echo += conn.recv(buffer_length).decode('utf8')
-        if len(conn.recv(buffer_length)) < buffer_length:
+        part = conn.recv(buffer_length)
+        echo += part.decode('utf8')
+        if len(part) < buffer_length:
             break
 
+    print("Sending: ", echo)
     conn.sendall(echo.encode('utf8'))
+    conn.close()
+    serv.close()

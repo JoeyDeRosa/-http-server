@@ -23,6 +23,9 @@ def client(message):
         if len(part) < buffer_length:
             break
 
+    clnt.close()
+
+    print("Received: ", msg_reply)
     return msg_reply
 
 if __name__ == "__main__":
