@@ -22,7 +22,7 @@ def test_client_exact_buffer():
     """Test messages that are an exact multiple of one buffer in length."""
     from client import client
     test_msg = "abcdefghij"
-    return len(client(test_msg)) == 10
+    return client(test_msg) == test_msg
 
 
 def test_client_non_ASCII():

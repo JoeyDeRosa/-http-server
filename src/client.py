@@ -5,7 +5,7 @@ import socket
 
 def client(message):
     """Send given message to server and recover any reply."""
-    infos = socket.getaddrinfo('127.0.0.1', 5000)
+    infos = socket.getaddrinfo('127.0.0.1', 5003)
     stream_info = [i for i in infos if i[1] == socket.SOCK_STREAM][0]
 
     clnt = socket.socket(*stream_info[:3])
@@ -17,8 +17,10 @@ def client(message):
     reply_complete = False
     msg_reply = ""
 
+
     while not reply_complete:
         part = clnt.recv(buffer_length)
+        print(part)
         msg_reply += part.decode('utf8')
         if len(part) < buffer_length:
             break

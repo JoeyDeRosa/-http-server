@@ -6,7 +6,7 @@ import socket
 
 def server():
     serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
-    address = ('127.0.0.1', 5000)
+    address = ('127.0.0.1', 5003)
     serv.bind(address)
 
     serv.listen(1)
@@ -28,5 +28,9 @@ def server():
             print('waiting')
             conn, addr = serv.accept()
         except KeyboardInterrupt:
+            print("Shutting down server.")
             break
     conn.close()
+    serv.close()
+
+server()
