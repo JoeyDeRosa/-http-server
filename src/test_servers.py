@@ -1,5 +1,7 @@
 """This modulet tests the client and server modules for the CF 401 Python HTTP-Server assignment."""
 
+import pytest
+
 # Test the following:
 # messages shorter than one buffer in length
 # messages longer than several buffers in length
@@ -35,23 +37,25 @@
 # Host: www.example.com<CRLF>
 # <CRLF>
 
-GOOD_REQ = b"GET /index.html HTTP/1.1/r/nHost: www.example.com/r/n/r/n"
+GOOD_REQ = b"GET /index.html HTTP/1.1\r\nHost: www.example.com\r\n\r\n"
 BAD_REQs = [
-    b"GOT /index.html HTTP/1.1/r/nHost: www.example.com/r/n/r/n",
-    b"GET /index.html HTTP/0.1/r/nHost: www.example.com/r/n/r/n",
-    b"GET index.html HTTP/0.1/r/nHost: www.example.com/r/n/r/n",
+    b"GOT /index.html HTTP/1.1\r\nHost: www.example.com\r\n\r\n",
+    b"GET /index.html HTTP/0.1\r\nHost: www.example.com\r\n\r\n",
+    b"GET index.html HTTP/0.1\r\nHost: www.example.com\r\n\r\n",
 ]
+
 
 def test_test_request_good_req():
     """Test test_request() with a properly formatted HTTP message."""
     from server import test_request
-    assert test_request(GOOD_REQ) == True
+    assert test_request(GOOD_REQ) is True
 
-@PYTEST.MARK.PAREMETRIZE("req", BAD_REQs)
+
+@pytest.mark.parametrize("req", BAD_REQs)
 def test_test_request_bad_req(req):
     """Test test_requrest() witih an improperly formatted HTTP message."""
-    from server imoprt test_request
-    assert test_request(req) == False
+    from server import test_request
+    assert test_request(req) is False
 
 
 def test_response_ok():
