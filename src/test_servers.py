@@ -60,7 +60,11 @@ def test_test_request_bad_req(req):
 
 def test_response_ok():
     """Test ok response."""
+    from client import client
+    assert '200' is client(GOOD_REQ)[9:12]
 
 
 def test_response_err():
     """Test response err."""
+    from client import client
+    assert '500' is client(BAD_REQs)[9:12]
