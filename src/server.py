@@ -14,23 +14,39 @@ def server():
     while True:
         conn, addr = serv.accept()
         try:
+            req_string = u''
             buffer_length = 10
-            echo = u''
-            while echo[-2:] != u"\r\n":
+            while req_string[-2:] != u"\r\n":
                 part = conn.recv(buffer_length)
-                echo += part.decode('utf8')
+                req_string += part.decode('utf8')
                 print("Received: ", part)
-
-            print("Sending: ", echo)
-            conn.sendall(echo.encode('utf8'))
-            print('waiting')
-            conn.close()
+            if test_request(req_string):
+                response_ok()
+                print('waiting')
+                conn.close()
+            else:
+                response_error()
 
         except KeyboardInterrupt:
             print("Shutting down server.")
             break
     conn.close()
     serv.close()
+
+
+def test_request(test_string):
+    method_list = ['GET', 'POST', 'PUT', 'DELETE']
+    end_list = ['HTTP/1.1', 'HTTP/1.0']
+    test_line = test_string.split('\r\n')
+    test_section = test_line[0].split(' ')
+    if test_section[0] not in method_list:
+        return False
+    elif test_section[1][0] is not '/':
+        return False
+    elif test_section[2] not in end_list:
+        return False
+    return True
+
 
 server()
 
