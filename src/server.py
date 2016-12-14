@@ -48,7 +48,7 @@ def test_request(test_string):
     if test_section[0] not in method_list:
         print("bad method")
         return False
-    elif test_section[1][0] is not '/':
+    elif str(test_section[1])[0] is not '/':
         print("bad URI")
         return False
     elif test_section[2] not in end_list:
