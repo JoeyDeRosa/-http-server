@@ -16,16 +16,17 @@ def server():
         try:
             req_string = u''
             buffer_length = 10
-            while req_string[-2:] != u"\r\n":
+            while req_string[-4:] != u"\r\n\r\n":
                 part = conn.recv(buffer_length)
                 req_string += part.decode('utf8')
                 print("Received: ", part)
             if test_request(req_string):
-                response_ok()
-                print('waiting')
-                conn.close()
+                conn.sendall(response_ok())
             else:
-                response_error()
+                conn.sendall(response_err())
+
+            print('waiting')
+            conn.close()
 
         except KeyboardInterrupt:
             print("Shutting down server.")
@@ -57,7 +58,12 @@ def test_request(test_string):
 
 def response_err():
     """Return formatted 500 error HTTP response as byte string."""
+    return b"HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/plain\r\n\r\nBAD message\r\n"
 
+# HTTP/1.1 200 OK
+# Content-Type: text/plain
+# <CRLF>
+# this is a pretty minimal response
 def response_ok():
     """Return formatted 200 OK HTTP response as byte string."""
-    return 
+    return b"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\ngreat message\r\n"

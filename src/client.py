@@ -19,7 +19,7 @@ def client(message):
     buffer_length = 10
     msg_reply = u''
 
-    while msg_reply[-2:] != u"\r\n":
+    while msg_reply[-4:] != u"\r\n\r\n":
         part = clnt.recv(buffer_length)
         msg_reply += part.decode('utf8')
 
