@@ -1,5 +1,5 @@
 """Server for Echo server assignment."""
-
+# encoding: utf-8
 
 import socket
 
@@ -33,3 +33,8 @@ def server():
     serv.close()
 
 server()
+
+def response_err():
+
+
+def response_ok():
