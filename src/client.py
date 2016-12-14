@@ -6,15 +6,14 @@ import socket
 
 def client(message):
     """Send given message to server and recover any reply."""
-    infos = socket.getaddrinfo('127.0.0.1', 5000)
+    infos = socket.getaddrinfo('127.0.0.1', 5002)
     stream_info = [i for i in infos if i[1] == socket.SOCK_STREAM][0]
 
     clnt = socket.socket(*stream_info[:3])
     clnt.connect(stream_info[-1])
 
-    message += '\r\n'
-    print("Sending: ", message.encode('utf8'))
-    clnt.sendall(message.encode('utf8'))
+    print("Sending: ", message)
+    clnt.sendall(message)
 
     buffer_length = 10
     msg_reply = u''

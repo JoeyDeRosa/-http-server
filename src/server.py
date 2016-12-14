@@ -1,12 +1,12 @@
 """Server for Echo server assignment."""
 # encoding: utf-8
-
+from __future__ import print_function
 import socket
 
 
 def server():
     serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
-    address = ('127.0.0.1', 5000)
+    address = ('127.0.0.1', 5002)
     serv.bind(address)
 
     serv.listen(1)
@@ -14,12 +14,13 @@ def server():
     while True:
         conn, addr = serv.accept()
         try:
-            req_string = u''
+            req_string = b''
             buffer_length = 10
-            while req_string[-4:] != u"\r\n\r\n":
+            while req_string[-4:] != b"\r\n\r\n":
                 part = conn.recv(buffer_length)
-                req_string += part.decode('utf8')
-                print("Received: ", part)
+                req_string += part
+
+            print("Testing, ", req_string)
             if test_request(req_string):
                 conn.sendall(response_ok())
             else:
@@ -58,12 +59,13 @@ def test_request(test_string):
 
 def response_err():
     """Return formatted 500 error HTTP response as byte string."""
-    return b"HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/plain\r\n\r\nBAD message\r\n"
+    return b"HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/plain\r\n\r\nBAD message\r\n\r\n"
 
-# HTTP/1.1 200 OK
-# Content-Type: text/plain
-# <CRLF>
-# this is a pretty minimal response
+
 def response_ok():
     """Return formatted 200 OK HTTP response as byte string."""
-    return b"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\ngreat message\r\n"
+    return b"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\ngreat message\r\n\r\n"
+
+
+if __name__ == "__main__":
+    server()
