@@ -21,12 +21,17 @@ def server():
                 req_string += part
 
             print("Testing, ", req_string)
-            if test_request(req_string):
-                conn.sendall(response_ok())
-            else:
+            try:
+                req_resault = parse_request(req_string)
+                if req_resault is False:
+                    raise ConnectionError('Invalid Request')
+                else:
+                    conn.sendall(response_ok())
+                    conn.sendall(req_resault)
+            except ConnectionError:
                 conn.sendall(response_err())
-
             print('waiting')
+            conn.shutdown()
             conn.close()
 
         except KeyboardInterrupt:
@@ -36,25 +41,30 @@ def server():
     serv.close()
 
 
-def test_request(test_string):
+def parse_request(test_string):
     """Test HTTP requests for valid format."""
-    method_list = ['GET', 'POST', 'PUT', 'DELETE']
-    end_list = ['HTTP/1.1', 'HTTP/1.0']
+    method_list = 'GET'
+    end_list = 'HTTP/1.1'
+    body_header = 'Host:'
     test_string = test_string.decode('utf8')
     test_line = test_string.split('\r\n')
     print(test_line)
-    test_section = test_line[0].split(' ')
-    print(test_section)
-    if test_section[0] not in method_list:
+    test_request = test_line[0].split(' ')
+    test_body = test_line[1].split(' ')
+    print(test_request)
+    if test_request[0] is method_list:
         print("bad method")
         return False
-    elif str(test_section[1])[0] is not '/':
+    elif str(test_request[1])[0] is not '/':
         print("bad URI")
         return False
-    elif test_section[2] not in end_list:
+    elif test_request[2] is end_list:
         print("bad protocol")
         return False
-    return True
+    elif test_body[0] is body_header:
+        print("bad body header")
+        return False
+    return str(test_request[1]).encode('utf8')
 
 
 def response_err():
