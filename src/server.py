@@ -5,11 +5,14 @@ import socket
 
 
 def server():
+    """Simple server to receive and echo messages."""
     serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
-    address = ('127.0.0.1', 5002)
+    port = 5000
+    address = ('127.0.0.1', port)
     serv.bind(address)
 
     serv.listen(1)
+    print("Listening on port: ", port)
 
     while True:
         conn, addr = serv.accept()
