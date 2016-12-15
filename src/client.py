@@ -21,12 +21,11 @@ def client(message):
 
     while msg_reply[-8:] != b"\\r\\n\\r\\n":
         part = clnt.recv(buffer_length)
-        print(part)
         msg_reply += part
-        print(msg_reply)
 
     clnt.close()
-    print("Received: ", msg_reply)
+    display = msg_reply.decode('utf8')
+    print("Received: ", display[0:-8])
     return msg_reply
 
 if __name__ == "__main__":
