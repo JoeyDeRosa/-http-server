@@ -13,6 +13,7 @@ def client(message):
     clnt.connect(stream_info[-1])
 
     print("Sending: ", message)
+    message = message.encode('utf8')
     clnt.sendall(message)
 
     buffer_length = 10

@@ -31,7 +31,6 @@ def server():
             except ConnectionError:
                 conn.sendall(response_err())
             print('waiting')
-            conn.shutdown()
             conn.close()
 
         except KeyboardInterrupt:
