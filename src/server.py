@@ -1,33 +1,36 @@
 """Server for Echo server assignment."""
-# encoding: utf-8
+
 from __future__ import print_function
 import socket
 
 
 def server():
     serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
-    address = ('127.0.0.1', 5002)
+    port = 5017
+    address = ('127.0.0.1', port)
     serv.bind(address)
 
     serv.listen(1)
+    print("Listening on: ", port)
 
     while True:
         conn, addr = serv.accept()
         try:
             req_string = b''
             buffer_length = 10
-            while req_string[-4:] != b"\r\n\r\n":
+            while req_string[-8:] != b"\\r\\n\\r\\n":
                 part = conn.recv(buffer_length)
                 req_string += part
+                print("Received: ", part)
 
             print("Testing, ", req_string)
             try:
-                req_resault = parse_request(req_string)
-                if req_resault is False:
+                req_result = parse_request(req_string)
+                if req_result is False:
                     raise ConnectionError('Invalid Request')
                 else:
                     conn.sendall(response_ok())
-                    conn.sendall(req_resault)
+                    conn.sendall(req_result)
             except ConnectionError:
                 conn.sendall(response_err())
             print('waiting')
@@ -46,7 +49,7 @@ def parse_request(test_string):
     end_list = 'HTTP/1.1'
     body_header = 'Host:'
     test_string = test_string.decode('utf8')
-    test_line = test_string.split('\r\n')
+    test_line = test_string.split('\\r\\n')
     print(test_line)
     test_request = test_line[0].split(' ')
     test_body = test_line[1].split(' ')
