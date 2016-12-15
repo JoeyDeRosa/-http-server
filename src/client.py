@@ -17,11 +17,13 @@ def client(message):
     clnt.sendall(message)
 
     buffer_length = 10
-    msg_reply = u''
+    msg_reply = b''
 
-    while msg_reply[-4:] != u"\r\n\r\n":
+    while msg_reply[-8:] != b"\\r\\n\\r\\n":
         part = clnt.recv(buffer_length)
-        msg_reply += part.decode('utf8')
+        print(part)
+        msg_reply += part
+        print(msg_reply)
 
     clnt.close()
     print("Received: ", msg_reply)

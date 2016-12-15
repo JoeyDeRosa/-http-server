@@ -29,6 +29,7 @@ def server():
                 if req_result is False:
                     raise ConnectionError('Invalid Request')
                 else:
+                    req_result += b'\\r\\n\\r\\n'
                     conn.sendall(response_ok())
                     conn.sendall(req_result)
             except ConnectionError:
