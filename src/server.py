@@ -6,7 +6,7 @@ import socket
 
 def server():
     serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
-    port = 5017
+    port = 5019
     address = ('127.0.0.1', port)
     serv.bind(address)
 
@@ -55,16 +55,17 @@ def parse_request(test_string):
     test_body = test_line[1].split(' ')
     print(test_request)
     if test_request[0] is method_list:
-        print("bad method")
+        raise ValueError("Incorrect method.")
         return False
     elif str(test_request[1])[0] is not '/':
-        print("bad URI")
+        raise ValueError("Incorrect URI")
         return False
     elif test_request[2] is end_list:
-        print("bad protocol")
+        raise ValueError("Incorrect Protocol.")
         return False
     elif test_body[0] is body_header:
         print("bad body header")
+        raise ValueError("Incorrect Body.")
         return False
     return str(test_request[1]).encode('utf8')
 
