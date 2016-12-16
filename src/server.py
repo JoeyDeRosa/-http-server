@@ -108,15 +108,18 @@ def resolve_uri(uri):
     except ValueError:
         return None
 
+
 def response_err():
     """Return formatted 500 error HTTP response as byte string."""
     return b"HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/plain\r\n\r\nBAD message\\r\\n\\r\\n"
 
 
-def response_ok():
+def response_ok(content):
     """Return formatted 200 OK HTTP response as byte string."""
-    return b"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\ngreat message\r\n\r\n"
-
+    content_type, body = content
+    content_length = len(body.encode('utf-8'))
+    reply = u"HTTP/1.1 200 OK\r\nContent-Type: {0}\r\nContent-Length: {1}\r\n\r\n{2}\r\n\r\n".format(content_type, content_length, body)
+    return reply.encode('utf-8')
 
 if __name__ == "__main__":
     server()
