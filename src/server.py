@@ -9,6 +9,7 @@ def g_server(socket, address):
 
     while True:
         try:
+            req_result = "500"
             req_string = b''
             buffer_length = 10
             while req_string[-8:] != b"\\r\\n\\r\\n":
@@ -17,15 +18,12 @@ def g_server(socket, address):
                 print("Received: ", part)
 
             print("Testing, ", req_string)
-            try:
-                req_result = parse_request(req_string)
-                if req_result is not None:
-                    socket.sendall(response_ok(resolve_uri(req_result)))
-                else:
-                    raise TypeError
-            except TypeError:
-                print("Sending Error response.")
-                socket.sendall(response_err())
+
+            req_result = parse_request(req_string)
+            if len(req_result) < 3:
+                socket.sendall(response_ok(req_result))
+            else:
+                socket.sendall(response_err(req_result))
 
             print('waiting')
             socket.close()
@@ -48,22 +46,20 @@ def parse_request(test_string):
         print(test_request)
         if str(test_request[0]) != method:
             print("bad method")
-            raise ValueError
+            return "400"
         elif str(test_request[1])[0] != '/':
             print("bad uri")
-            raise ValueError
+            return "400"
         elif str(test_request[2]) != end_list:
             print("bad proto")
-            raise ValueError
+            return "400"
         elif str(test_body[0]) != body_header:
             print("bad header")
-            raise ValueError
-    except ValueError:
-        return None
+            return "400"
     except IndexError:
-        return None
+        return "400"
     else:
-        return str(test_request[1])
+        return resolve_uri(str(test_request[1]))
 
 
 def resolve_uri(uri):
@@ -74,8 +70,8 @@ def resolve_uri(uri):
     try:
         if not uri.startswith('/allowed') or '/..' in uri:
             #Check for security - only allow access to one folder.
-            print("OUT")
-            raise ValueError
+            print("403")
+            return "403"
         elif uri.endswith(u'.txt'):
             f = open(abs_path, 'r')
             body = f.read()
@@ -96,15 +92,23 @@ def resolve_uri(uri):
             body += '</ul>\n'
             print(body)
             return ('text/html', body)
-    except ValueError:
-        return None
     except FileNotFoundError:
-        return None
+        return "404"
 
 
-def response_err():
+def response_err(err):
     """Return formatted 500 error HTTP response as byte string."""
-    return b"HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/plain\r\n\r\nBAD message\\r\\n\\r\\n"
+    if type(err) != str:
+        err = err.decode('utf-8')
+    err_dict = {
+        "500": ("Internal Server Error", "Invalid HTTP request."),
+        "404": ("File Not Found", "That resource does not exist."),
+        "403": ("Forbidden", "Access not allowed."),
+        "400": ("Bad Request", "The request could not be understood by the server.")
+    }
+
+    reply = "HTTP/1.1 {0} {1}\r\nContent-Type: text/plain\r\n\r\n{2}\\r\\n\\r\\n".format(err, err_dict[err][0], err_dict[err][1])
+    return reply.encode('utf-8')
 
 
 def response_ok(content):
