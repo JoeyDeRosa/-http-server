@@ -2,6 +2,8 @@
 
 from __future__ import print_function
 import socket
+import os
+import html
 
 
 def server():
@@ -72,6 +74,34 @@ def parse_request(test_string):
         return
     else:
         return str(test_request[1]).encode('utf8')
+
+
+def resolve_uri(uri):
+    """Return response body and type as tuple."""
+    # if type(uri) is not str:
+    #     uri = uri.decode('utf8')
+
+    if not uri.startswith(u'/allowed'):
+        #Check for security - only allow access to one folder.
+        print("OUT")
+        return None
+    elif uri.endswith(u'.txt'):
+        f = open(uri, 'r')
+        body = f.read()
+        f.close()
+        return ('text/plain', body)
+    elif uri.endswith(u'.png'):
+        f = open(uri, 'rb')
+        img = f.read()
+        f.close()
+        return ('image/png', img)
+    else:
+        lst = os.listdir(uri[1:])
+        body = '<ul>'
+        for item in lst:
+            body += '<li>' + item + '</li>'
+        body += '</ul>'
+        return ('text/html', body)
 
 
 def response_err():

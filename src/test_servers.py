@@ -45,27 +45,71 @@ BAD_REQs = [
 ]
 
 
-def test_test_request_good_req():
-    """Test test_request() with a properly formatted HTTP message."""
-    from server import parse_request
-    assert parse_request(GOOD_REQ.encode('utf-8')) == b"/index.html"
+FILE_REQ = [
+    u"GET /allowed/sample.txt HTTP1.1\\r\\nHost: localhost\\r\\n\\r\\n",
+    u"GET /awesome.png HTTP1.1\\r\\nHost: localhost\\r\\n\\r\\n",
+]
+
+GOOD_DIR_REQ = u"GET /allowed HTTP1.1\\r\\nHost: localhost\\r\\n\\r\\n"
+
+BAD_DIR_REQ = [
+    u"GET /../src HTTP1.1\\r\\nHost: localhost\\r\\n\\r\\n",
+    u"GET / HTTP1.1\\r\\nHost: localhost\\r\\n\\r\\n",
+]
+
+RESOLVE_URI_TESTS = [
+    ("/allowed", tuple),
+    ("/allowed/sample.txt", tuple),
+    ("/allowed/awesome.png", tuple),
+    ("/", None),
+    ("/..", None)
+]
 
 
-@pytest.mark.parametrize("req", BAD_REQs)
-def test_test_request_bad_req(req):
-    """Test test_requrest() witih an improperly formatted HTTP message."""
-    from server import parse_request
-    assert parse_request(req) is None
+
+# def test_test_request_good_req():
+#     """Test test_request() with a properly formatted HTTP message."""
+#     from server import parse_request
+#     assert parse_request(GOOD_REQ.encode('utf-8')) == b"/index.html"
 
 
-def test_response_ok():
-    """Test ok response."""
-    from client import client
-    assert b'200' == client(GOOD_REQ)[9:12]
+# @pytest.mark.parametrize("req", BAD_REQs)
+# def test_test_request_bad_req(req):
+#     """Test test_requrest() witih an improperly formatted HTTP message."""
+#     from server import parse_request
+#     assert parse_request(req) is None
 
 
-@pytest.mark.parametrize("req", BAD_REQs)
-def test_response_err(req):
-    """Test response err."""
-    from client import client
-    assert b'500' == client(req)[9:12]
+# def test_response_ok():
+#     """Test ok response."""
+#     from client import client
+#     assert b'200' == client(GOOD_REQ)[9:12]
+
+
+# @pytest.mark.parametrize("req", BAD_REQs)
+# def test_response_err(req):
+#     """Test response err."""
+#     from client import client
+#     assert b'500' == client(req)[9:12]
+
+# def test_response_dir(req):
+#     """Test response for a directory."""
+#     from client import client
+
+
+# def test_response_txt(req):
+#     """Test response for text file."""
+#     from client import client
+
+
+# def test_response_img(req):
+#     """Test response for img."""
+#     from client import client
+
+
+@pytest.mark.parametrize("uri, result", RESOLVE_URI_TESTS)
+def test_resolve_uri_bad_file(uri, result):
+    """Test resolve_uri function."""
+    from server import resolve_uri
+    assert resolve_uri(uri) is result
+
