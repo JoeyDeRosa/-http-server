@@ -96,7 +96,7 @@ def resolve_uri(uri):
             f = open(uri[1:], 'rb')
             img = f.read()
             f.close()
-            print(img)
+            print(img[:100])
             return ('image/png', img)
         else:
             lst = os.listdir(uri[1:])

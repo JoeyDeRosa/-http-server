@@ -92,9 +92,10 @@ RESOLVE_URI_TESTS = [
 #     from client import client
 #     assert b'500' == client(req)[9:12]
 
-# def test_response_dir(req):
-#     """Test response for a directory."""
-#     from client import client
+def test_response_dir():
+    """Test response for a directory."""
+    from client import client
+    assert client(GOOD_DIR_REQ)[1] == "Content-Type: text/html"
 
 
 # def test_response_txt(req):
