@@ -27,7 +27,11 @@ def server():
 
             print("Testing, ", req_string)
             try:
-                conn.sendall(response_ok(resolve_uri(parse_request(req_string))))
+                req_result = parse_request(req_string)
+                if req_result is not None:
+                    conn.sendall(response_ok(resolve_uri(req_result)))
+                else:
+                    raise TypeError
             except TypeError:
                 print("Sending Error response.")
                 conn.sendall(response_err())
@@ -66,11 +70,11 @@ def parse_request(test_string):
             print("bad header")
             raise ValueError
     except ValueError:
-        return
+        return None
     except IndexError:
-        return
+        return None
     else:
-        return str(test_request[1]).encode('utf8')
+        return str(test_request[1])
 
 
 def resolve_uri(uri):
@@ -78,7 +82,7 @@ def resolve_uri(uri):
     # if type(uri) is not str:
     #     uri = uri.decode('utf8')
     try:
-        if not uri.startswith(u'/allowed'):
+        if not uri.startswith('/allowed'):
             #Check for security - only allow access to one folder.
             print("OUT")
             raise ValueError
@@ -114,8 +118,11 @@ def response_err():
 def response_ok(content):
     """Return formatted 200 OK HTTP response as byte string."""
     content_type, body = content
-    content_length = len(body.encode('utf-8'))
-    reply = u"HTTP/1.1 200 OK\r\nContent-Type: {0}\r\nContent-Length: {1}\r\n\r\n{2}\r\n\r\n".format(content_type, content_length, body)
+    try:
+        content_length = len(body.encode('utf-8'))
+    except AttributeError:
+        content_length = len(body)
+    reply = u"HTTP/1.1 200 OK\r\nContent-Type: {0}\r\nContent-Length: {1}\r\n\r\n{2}\\r\\n\\r\\n".format(content_type, content_length, body)
     return reply.encode('utf-8')
 
 if __name__ == "__main__":

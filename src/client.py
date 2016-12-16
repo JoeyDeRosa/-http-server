@@ -29,5 +29,10 @@ def client(message):
     print("Received: ", display[0:-8])
     return msg_reply
 
+
+def split_reply(reply):
+    return reply.split('\\r\\n')
+
+
 if __name__ == "__main__":
     client(sys.argv[1])
