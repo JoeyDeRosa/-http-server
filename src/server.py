@@ -98,6 +98,8 @@ def resolve_uri(uri):
             return ('text/html', body)
     except ValueError:
         return None
+    except FileNotFoundError:
+        return None
 
 
 def response_err():
