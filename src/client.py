@@ -6,7 +6,7 @@ import socket
 
 def client(message):
     """Send given message to server and recover any reply."""
-    infos = socket.getaddrinfo('127.0.0.1', 5002)
+    infos = socket.getaddrinfo('127.0.0.1', 5003)
     stream_info = [i for i in infos if i[1] == socket.SOCK_STREAM][0]
 
     clnt = socket.socket(*stream_info[:3])
@@ -26,7 +26,7 @@ def client(message):
     clnt.close()
     display = msg_reply.decode('utf8')
     reply_check = split_reply(display)
-    print("Received: ", display[0:-8])
+    print("Received: ", display[0:100])
     return reply_check
 
 

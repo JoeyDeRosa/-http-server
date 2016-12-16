@@ -82,7 +82,7 @@ def test_parse_request_bad_req(req):
 @pytest.mark.parametrize("req", FILE_REQ)
 def test_response_ok(req):
     """Test ok response."""
-    from server import client
+    from client import client
     assert b'200' == client(req)[9:12]
 
 
