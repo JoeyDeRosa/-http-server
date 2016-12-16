@@ -5,22 +5,14 @@ import socket
 import os
 
 
-def server():
-    serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
-    port = 5003
-    address = ('127.0.0.1', port)
-    serv.bind(address)
-
-    serv.listen(1)
-    print("Listening on: ", port)
+def g_server(socket, address):
 
     while True:
-        conn, addr = serv.accept()
         try:
             req_string = b''
             buffer_length = 10
             while req_string[-8:] != b"\\r\\n\\r\\n":
-                part = conn.recv(buffer_length)
+                part = socket.recv(buffer_length)
                 req_string += part
                 print("Received: ", part)
 
@@ -28,21 +20,19 @@ def server():
             try:
                 req_result = parse_request(req_string)
                 if req_result is not None:
-                    conn.sendall(response_ok(resolve_uri(req_result)))
+                    socket.sendall(response_ok(resolve_uri(req_result)))
                 else:
                     raise TypeError
             except TypeError:
                 print("Sending Error response.")
-                conn.sendall(response_err())
+                socket.sendall(response_err())
 
             print('waiting')
-            conn.close()
+            socket.close()
 
         except KeyboardInterrupt:
             print("Shutting down server.")
             break
-    conn.close()
-    serv.close()
 
 
 def parse_request(test_string):
@@ -82,7 +72,7 @@ def resolve_uri(uri):
     #     uri = uri.decode('utf8')
     abs_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), uri[1:])
     try:
-        if not uri.startswith('/allowed'):
+        if not uri.startswith('/allowed') or '/..' in uri:
             #Check for security - only allow access to one folder.
             print("OUT")
             raise ValueError
@@ -126,4 +116,10 @@ def response_ok(content):
     return reply.encode('utf-8')
 
 if __name__ == "__main__":
-    server()
+    from gevent.server import StreamServer
+    from gevent.monkey import patch_all
+    patch_all()
+    port = 5000
+    server = StreamServer(('127.0.0.1', port), g_server)
+    print('Starting server on port ', port)
+    server.serve_forever()
