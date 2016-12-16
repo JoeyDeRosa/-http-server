@@ -27,10 +27,7 @@ def server():
 
             print("Testing, ", req_string)
             try:
-                req_result = parse_request(req_string)
-                req_result += b'\\r\\n\\r\\n'
-                conn.sendall(response_ok())
-                conn.sendall(req_result)
+                conn.sendall(response_ok(resolve_uri(parse_request(req_string))))
             except TypeError:
                 print("Sending Error response.")
                 conn.sendall(response_err())
