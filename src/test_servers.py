@@ -37,7 +37,7 @@ import pytest
 # Host: www.example.com<CRLF>
 # <CRLF>
 
-GOOD_REQ = u"GET /index.html HTTP/1.1\\r\\nHost: www.example.com\\r\\n\\r\\n"
+GOOD_REQ = u"GET /allowed.html HTTP/1.1\\r\\nHost: www.example.com\\r\\n\\r\\n"
 BAD_REQs = [
     b"GOT /index.html HTTP/1.1\\r\\nHost: www.example.com\\r\\n\\r\\n",
     b"GET /index.html HTTP/0.1\\r\\nHost: www.example.com\\r\\n\\r\\n",
@@ -66,30 +66,31 @@ RESOLVE_URI_TESTS = [
 ]
 
 
-# def test_test_request_good_req():
-#     """Test test_request() with a properly formatted HTTP message."""
-#     from server import parse_request
-#     assert parse_request(GOOD_REQ.encode('utf-8')) == b"/index.html"
+def test_parse_request_good_req():
+    """Test test_request() with a properly formatted HTTP message."""
+    from server import parse_request
+    assert parse_request(GOOD_REQ.encode('utf-8')) == u'/allowed.html'
 
 
-# @pytest.mark.parametrize("req", BAD_REQs)
-# def test_test_request_bad_req(req):
-#     """Test test_requrest() witih an improperly formatted HTTP message."""
-#     from server import parse_request
-#     assert parse_request(req) is None
+@pytest.mark.parametrize("req", BAD_REQs)
+def test_parse_request_bad_req(req):
+    """Test test_requrest() witih an improperly formatted HTTP message."""
+    from server import parse_request
+    assert parse_request(req) is None
 
 
-# @pytest.mark.parametrize()
-# def test_response_ok():
-#     """Test ok response."""
-#     from server import response_ok
+@pytest.mark.parametrize("req", FILE_REQ)
+def test_response_ok(req):
+    """Test ok response."""
+    from server import client
+    assert b'200' == client(req)[9:12]
 
 
-# @pytest.mark.parametrize("req", BAD_REQs)
-# def test_response_err(req):
-#     """Test response err."""
-#     from client import client
-#     assert b'500' == client(req)[9:12]
+@pytest.mark.parametrize("req", BAD_REQs)
+def test_response_err(req):
+    """Test response err."""
+    from client import client
+    assert b'500' == client(req)[9:12]
 
 
 def test_response_dir():
@@ -115,5 +116,4 @@ def test_resolve_uri_bad_file(uri, result):
     """Test resolve_uri function."""
     from server import resolve_uri
     assert type(resolve_uri(uri)) is result
-
-
+ 
