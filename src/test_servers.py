@@ -61,8 +61,8 @@ RESOLVE_URI_TESTS = [
     ("/allowed", tuple),
     ("/allowed/sample.txt", tuple),
     ("/allowed/awesome.png", tuple),
-    ("/", None),
-    ("/..", None)
+    ("/", type(None)),
+    ("/..", type(None))
 ]
 
 
@@ -111,5 +111,6 @@ RESOLVE_URI_TESTS = [
 def test_resolve_uri_bad_file(uri, result):
     """Test resolve_uri function."""
     from server import resolve_uri
-    assert resolve_uri(uri) is result
+    assert type(resolve_uri(uri)) is result
+
 

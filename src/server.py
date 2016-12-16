@@ -86,21 +86,24 @@ def resolve_uri(uri):
         print("OUT")
         return None
     elif uri.endswith(u'.txt'):
-        f = open(uri, 'r')
+        f = open(uri[1:], 'r')
         body = f.read()
         f.close()
+        print(body)
         return ('text/plain', body)
     elif uri.endswith(u'.png'):
-        f = open(uri, 'rb')
+        f = open(uri[1:], 'rb')
         img = f.read()
         f.close()
+        print(img)
         return ('image/png', img)
     else:
         lst = os.listdir(uri[1:])
-        body = '<ul>'
+        body = '<ul>\n'
         for item in lst:
-            body += '<li>' + item + '</li>'
-        body += '</ul>'
+            body += '<li>' + item + '</li>\n'
+        body += '</ul>\n'
+        print(body)
         return ('text/html', body)
 
 
