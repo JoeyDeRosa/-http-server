@@ -80,32 +80,33 @@ def resolve_uri(uri):
     """Return response body and type as tuple."""
     # if type(uri) is not str:
     #     uri = uri.decode('utf8')
-
-    if not uri.startswith(u'/allowed'):
-        #Check for security - only allow access to one folder.
-        print("OUT")
+    try:
+        if not uri.startswith(u'/allowed'):
+            #Check for security - only allow access to one folder.
+            print("OUT")
+            raise ValueError
+        elif uri.endswith(u'.txt'):
+            f = open(uri[1:], 'r')
+            body = f.read()
+            f.close()
+            print(body)
+            return ('text/plain', body)
+        elif uri.endswith(u'.png'):
+            f = open(uri[1:], 'rb')
+            img = f.read()
+            f.close()
+            print(img)
+            return ('image/png', img)
+        else:
+            lst = os.listdir(uri[1:])
+            body = '<ul>\n'
+            for item in lst:
+                body += '<li>' + item + '</li>\n'
+            body += '</ul>\n'
+            print(body)
+            return ('text/html', body)
+    except ValueError:
         return None
-    elif uri.endswith(u'.txt'):
-        f = open(uri[1:], 'r')
-        body = f.read()
-        f.close()
-        print(body)
-        return ('text/plain', body)
-    elif uri.endswith(u'.png'):
-        f = open(uri[1:], 'rb')
-        img = f.read()
-        f.close()
-        print(img)
-        return ('image/png', img)
-    else:
-        lst = os.listdir(uri[1:])
-        body = '<ul>\n'
-        for item in lst:
-            body += '<li>' + item + '</li>\n'
-        body += '</ul>\n'
-        print(body)
-        return ('text/html', body)
-
 
 def response_err():
     """Return formatted 500 error HTTP response as byte string."""
