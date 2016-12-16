@@ -92,7 +92,7 @@ def resolve_uri(uri):
             f.close()
             print(body)
             return ('text/plain', body)
-        elif uri.endswith(u'.png'):
+        elif uri.endswith(u'.png') or uri.endswith(u'.jpeg') or uri.endswith(u'.bmp'):
             f = open(abs_path, 'rb')
             img = f.read()
             f.close()

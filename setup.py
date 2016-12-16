@@ -9,7 +9,7 @@ setup(
     license="MIT",
     package_dir={'': 'src'},
     py_modules=["http-server"],
-    install_requires=[],
+    install_requires=["gevent"],
     extras_require={"test": ["pytest", "pytest-watch", "pytest-cov", "tox"]},
     entry_points={
         'console_scripts': [
