@@ -6,7 +6,7 @@ import socket
 
 def client(message):
     """Send given message to server and recover any reply."""
-    infos = socket.getaddrinfo('127.0.0.1', 5002)
+    infos = socket.getaddrinfo('127.0.0.1', 5001)
     stream_info = [i for i in infos if i[1] == socket.SOCK_STREAM][0]
 
     clnt = socket.socket(*stream_info[:3])

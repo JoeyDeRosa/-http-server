@@ -37,7 +37,7 @@ import pytest
 # Host: www.example.com<CRLF>
 # <CRLF>
 
-GOOD_REQ = u"GET /allowed.html HTTP/1.1\\r\\nHost: www.example.com\\r\\n\\r\\n"
+GOOD_REQ = u"GET /allowed HTTP/1.1\\r\\nHost: www.example.com\\r\\n\\r\\n"
 BAD_REQs = [
     b"GOT /index.html HTTP/1.1\\r\\nHost: www.example.com\\r\\n\\r\\n",
     b"GET /index.html HTTP/0.1\\r\\nHost: www.example.com\\r\\n\\r\\n",
@@ -69,7 +69,7 @@ RESOLVE_URI_TESTS = [
 def test_parse_request_good_req():
     """Test test_request() with a properly formatted HTTP message."""
     from server import parse_request
-    assert parse_request(GOOD_REQ.encode('utf-8')) == u'/allowed.html'
+    assert parse_request(GOOD_REQ.encode('utf-8')) == u'/allowed'
 
 
 @pytest.mark.parametrize("req", BAD_REQs)
@@ -82,15 +82,15 @@ def test_parse_request_bad_req(req):
 @pytest.mark.parametrize("req", FILE_REQ)
 def test_response_ok(req):
     """Test ok response."""
-    from server import client
-    assert b'200' == client(req)[9:12]
+    from client import client
+    assert '200' == client(req)[0][9:12]
 
 
 @pytest.mark.parametrize("req", BAD_REQs)
 def test_response_err(req):
     """Test response err."""
     from client import client
-    assert b'500' == client(req)[9:12]
+    assert '500' == client(req)[0][9:12]
 
 
 def test_response_dir():
