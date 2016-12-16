@@ -3,12 +3,11 @@
 from __future__ import print_function
 import socket
 import os
-import html
 
 
 def server():
     serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
-    port = 5001
+    port = 5002
     address = ('127.0.0.1', port)
     serv.bind(address)
 
@@ -81,25 +80,26 @@ def resolve_uri(uri):
     """Return response body and type as tuple."""
     # if type(uri) is not str:
     #     uri = uri.decode('utf8')
+    abs_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), uri[1:])
     try:
         if not uri.startswith('/allowed'):
             #Check for security - only allow access to one folder.
             print("OUT")
             raise ValueError
         elif uri.endswith(u'.txt'):
-            f = open(uri[1:], 'r')
+            f = open(abs_path, 'r')
             body = f.read()
             f.close()
             print(body)
             return ('text/plain', body)
         elif uri.endswith(u'.png'):
-            f = open(uri[1:], 'rb')
+            f = open(abs_path, 'rb')
             img = f.read()
             f.close()
             print(img[:100])
             return ('image/png', img)
         else:
-            lst = os.listdir(uri[1:])
+            lst = os.listdir(abs_path)
             body = '<ul>\n'
             for item in lst:
                 body += '<li>' + item + '</li>\n'

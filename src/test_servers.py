@@ -66,7 +66,6 @@ RESOLVE_URI_TESTS = [
 ]
 
 
-
 # def test_test_request_good_req():
 #     """Test test_request() with a properly formatted HTTP message."""
 #     from server import parse_request
@@ -80,10 +79,10 @@ RESOLVE_URI_TESTS = [
 #     assert parse_request(req) is None
 
 
+# @pytest.mark.parametrize()
 # def test_response_ok():
 #     """Test ok response."""
-#     from client import client
-#     assert b'200' == client(GOOD_REQ)[9:12]
+#     from server import response_ok
 
 
 # @pytest.mark.parametrize("req", BAD_REQs)
@@ -92,15 +91,17 @@ RESOLVE_URI_TESTS = [
 #     from client import client
 #     assert b'500' == client(req)[9:12]
 
+
 def test_response_dir():
     """Test response for a directory."""
     from client import client
     assert client(GOOD_DIR_REQ)[1] == "Content-Type: text/html"
 
 
-# def test_response_txt(req):
-#     """Test response for text file."""
-#     from client import client
+def test_response_txt():
+    """Test response for text file."""
+    from client import client
+    assert client(FILE_REQ[0])[1] == "Content-Type: text/plain"
 
 
 def test_response_img():
