@@ -6,7 +6,6 @@ import os
 
 
 def server():
-    serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
     port = 5001
     address = ('127.0.0.1', port)
     serv.bind(address)

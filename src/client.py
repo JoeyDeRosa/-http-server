@@ -26,7 +26,7 @@ def client(message):
     clnt.close()
     display = msg_reply.decode('utf8')
     reply_check = split_reply(display)
-    print("Received: ", display[0:-8])
+    print("Received: ", display[0:100])
     return reply_check
 
 
