@@ -61,8 +61,8 @@ RESOLVE_URI_TESTS = [
     ("/allowed", tuple),
     ("/allowed/sample.txt", tuple),
     ("/allowed/awesome.png", tuple),
-    ("/", type(None)),
-    ("/..", type(None))
+    ("/allowed/txt.txt", "404"),
+    ("/..", "403"),
 ]
 
 
@@ -112,7 +112,7 @@ def test_response_img():
 
 
 @pytest.mark.parametrize("uri, result", RESOLVE_URI_TESTS)
-def test_resolve_uri_bad_file(uri, result):
+def test_resolve_uri(uri, result):
     """Test resolve_uri function."""
     from server import resolve_uri
-    assert type(resolve_uri(uri)) is result
+    assert resolve_uri(uri) is result
