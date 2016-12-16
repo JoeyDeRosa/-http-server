@@ -23,15 +23,15 @@ def client(message):
     while msg_reply[-8:] != b"\\r\\n\\r\\n":
         part = clnt.recv(buffer_length)
         msg_reply += part
-
     clnt.close()
     display = msg_reply.decode('utf8')
+    reply_check = split_reply(display)
     print("Received: ", display[0:-8])
-    return msg_reply
+    return reply_check
 
 
 def split_reply(reply):
-    return reply.split('\\r\\n')
+    return reply.split('\r\n')
 
 
 if __name__ == "__main__":

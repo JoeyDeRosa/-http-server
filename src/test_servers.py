@@ -46,15 +46,15 @@ BAD_REQs = [
 
 
 FILE_REQ = [
-    u"GET /allowed/sample.txt HTTP1.1\\r\\nHost: localhost\\r\\n\\r\\n",
-    u"GET /awesome.png HTTP1.1\\r\\nHost: localhost\\r\\n\\r\\n",
+    u"GET /allowed/sample.txt HTTP/1.1\\r\\nHost: localhost\\r\\n\\r\\n",
+    u"GET /allowed/awesome.png HTTP/1.1\\r\\nHost: localhost\\r\\n\\r\\n",
 ]
 
-GOOD_DIR_REQ = u"GET /allowed HTTP1.1\\r\\nHost: localhost\\r\\n\\r\\n"
+GOOD_DIR_REQ = u"GET /allowed HTTP/1.1\\r\\nHost: localhost\\r\\n\\r\\n"
 
 BAD_DIR_REQ = [
-    u"GET /../src HTTP1.1\\r\\nHost: localhost\\r\\n\\r\\n",
-    u"GET / HTTP1.1\\r\\nHost: localhost\\r\\n\\r\\n",
+    u"GET /../src HTTP/1.1\\r\\nHost: localhost\\r\\n\\r\\n",
+    u"GET / HTTP/1.1\\r\\nHost: localhost\\r\\n\\r\\n",
 ]
 
 RESOLVE_URI_TESTS = [
@@ -102,9 +102,10 @@ RESOLVE_URI_TESTS = [
 #     from client import client
 
 
-# def test_response_img(req):
-#     """Test response for img."""
-#     from client import client
+def test_response_img():
+    """Test response for img."""
+    from client import client
+    assert client(FILE_REQ[1])[1] == 'Content-Type: image/png'
 
 
 @pytest.mark.parametrize("uri, result", RESOLVE_URI_TESTS)
