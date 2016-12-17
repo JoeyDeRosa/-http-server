@@ -1,4 +1,6 @@
-# -http-server#Summary
+# -http-server
+
+#Summary
 
 The assignment was to implement a simple HTTP Server with concurrency.  A user should be able to send a formatted GET request through the client via the command line and receive a formatted response from the server.  The server is able to return requests for text files, images (as byte strings), or directories.  If the the GET request is improperly formatted or requests an unvailable or forbidden resource, the server will return a relevant error as a properly formatted HTTP response.
 
