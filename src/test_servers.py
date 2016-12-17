@@ -57,12 +57,15 @@ BAD_DIR_REQ = [
     u"GET / HTTP/1.1\\r\\nHost: localhost\\r\\n\\r\\n",
 ]
 
-RESOLVE_URI_TESTS = [
+RESOLVE_URI_GOOD_TESTS = [
     ("/allowed", tuple),
     ("/allowed/sample.txt", tuple),
     ("/allowed/awesome.png", tuple),
-    ("/allowed/txt.txt", "404"),
+]
+
+RESOLVE_URI_BAD_TESTS = [
     ("/..", "403"),
+    ("/allowed?txt.txt", "404"),
 ]
 
 
@@ -90,7 +93,7 @@ def test_response_ok(req):
 def test_response_err(req):
     """Test response err."""
     from client import client
-    assert '500' == client(req)[0][9:12]
+    assert '400' == client(req)[0][9:12]
 
 
 def test_response_dir():
@@ -111,8 +114,15 @@ def test_response_img():
     assert client(FILE_REQ[1])[1] == 'Content-Type: image/png'
 
 
-@pytest.mark.parametrize("uri, result", RESOLVE_URI_TESTS)
-def test_resolve_uri(uri, result):
-    """Test resolve_uri function."""
+@pytest.mark.parametrize("uri, result", RESOLVE_URI_GOOD_TESTS)
+def test_resolve_uri_good(uri, result):
+    """Test that resolve_uri returns a tuple."""
+    from server import resolve_uri
+    assert type(resolve_uri(uri)) is result
+
+
+@pytest.mark.parametrize("uri, result", RESOLVE_URI_BAD_TESTS)
+def test_resolve_uri_bad(uri, result):
+    """Test that resolve_uri returns an error code."""
     from server import resolve_uri
     assert resolve_uri(uri) is result

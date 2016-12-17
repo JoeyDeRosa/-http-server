@@ -92,7 +92,7 @@ def resolve_uri(uri):
             body += '</ul>\n'
             print(body)
             return ('text/html', body)
-    except FileNotFoundError:
+    except IOError:
         return "404"
 
 
