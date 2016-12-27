@@ -1,10 +1,12 @@
 """This file is the client module of the CF 401 Python HTTP-Server assignment."""
+# -*- coding: utf-8 -*-
 
+from __future__ import print_function
 import sys
 import socket
 
 
-def client(message):
+def client(message=sys.argv[1]):
     """Send given message to server and recover any reply."""
     infos = socket.getaddrinfo('127.0.0.1', 5000)
     stream_info = [i for i in infos if i[1] == socket.SOCK_STREAM][0]
@@ -20,18 +22,15 @@ def client(message):
     buffer_length = 10
     msg_reply = b''
 
-    while msg_reply[-8:] != b"\\r\\n\\r\\n":
+    while True:
         part = clnt.recv(buffer_length)
         msg_reply += part
+        if msg_reply[-4:] == b"\r\n\r\n" or msg_reply[-8:] == b"\\r\\n\\r\\n":
+                    break
+
     clnt.close()
-    display = msg_reply.decode('utf8')
-    reply_check = split_reply(display)
-    print("Received: ", display)
-    return reply_check
-
-
-def split_reply(reply):
-    return reply.split('\r\n')
+    # reply_check = msg_reply.split('\r\n')
+    return msg_reply
 
 
 if __name__ == "__main__":

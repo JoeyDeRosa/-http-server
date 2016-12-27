@@ -8,12 +8,12 @@ setup(
     author_email="",
     license="MIT",
     package_dir={'': 'src'},
-    py_modules=["http-server"],
+    py_modules=["server", "client"],
     install_requires=["gevent"],
     extras_require={"test": ["pytest", "pytest-watch", "pytest-cov", "tox"]},
     entry_points={
         'console_scripts': [
-            "http-server = client:client"
+            "client = client:client"
         ]
     }
 )
