@@ -6,7 +6,7 @@ import socket
 
 def server():
     serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
-    port = 5001
+    port = 5003
     address = ('127.0.0.1', port)
     serv.bind(address)
 
@@ -16,22 +16,27 @@ def server():
     while True:
         conn, addr = serv.accept()
         try:
-            req_string = b''
+            req_result = "500"
+            req_string = u''
             buffer_length = 10
-            while req_string[-8:] != b"\\r\\n\\r\\n":
+
+            while True:
                 part = conn.recv(buffer_length)
-                req_string += part
-                print("Received: ", part)
+                req_string += part.decode('utf-8')
+                if req_string[-4:] == u"\r\n\r\n" or req_string[-8:] == u"\\r\\n\\r\\n":
+                    break
+
+            if "\\r\\n" in req_string:
+                req_string = req_string.replace("\\r\\n", "\r\n")
 
             print("Testing, ", req_string)
-            try:
-                req_result = parse_request(req_string)
-                req_result += b'\\r\\n\\r\\n'
-                conn.sendall(response_ok())
-                conn.sendall(req_result)
-            except TypeError:
-                print("Sending Error response.")
-                conn.sendall(response_err())
+            req_result = parse_request(req_string)
+            if req_result != "400":
+                conn.sendall(response_ok(req_result))
+                print("Reply OK")
+            else:
+                conn.sendall(response_err(req_result))
+                print("Reply error")
 
             print('waiting')
             conn.close()
@@ -48,41 +53,55 @@ def parse_request(test_string):
     method = 'GET'
     end_list = 'HTTP/1.1'
     body_header = 'Host:'
+    print(test_string)
     try:
-        test_string = test_string.decode('utf8')
-        test_line = test_string.split('\\r\\n')
+        test_line = test_string.split('\r\n')
         test_request = test_line[0].split(' ')
         test_body = test_line[1].split(' ')
-        print(test_request)
+        print("Test line: ", test_line)
+        print("Test Request: ", test_request)
         if str(test_request[0]) != method:
             print("bad method")
-            raise ValueError
+            return "400"
         elif str(test_request[1])[0] != '/':
             print("bad uri")
-            raise ValueError
+            return "400"
         elif str(test_request[2]) != end_list:
             print("bad proto")
-            raise ValueError
+            return "400"
         elif str(test_body[0]) != body_header:
             print("bad header")
-            raise ValueError
-    except ValueError:
-        return
+            return "400"
     except IndexError:
-        return
+        return "400"
     else:
-        return str(test_request[1]).encode('utf8')
+        return str(test_request[1])
 
 
-def response_err():
+def response_err(err):
     """Return formatted 500 error HTTP response as byte string."""
-    return b"HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/plain\r\n\r\nBAD message\\r\\n\\r\\n"
+    if type(err) != str:
+        err = err.decode('utf-8')
+    err_dict = {
+        "500": ("Internal Server Error", "Invalid HTTP request."),
+        "404": ("File Not Found", "That resource does not exist."),
+        "403": ("Forbidden", "Access not allowed."),
+        "400": ("Bad Request", "The request could not be understood by the server.")
+    }
+
+    reply = "HTTP/1.1 {0} {1}\r\nContent-Type: text/plain\r\n\r\n{2}\r\n\r\n".format(err, err_dict[err][0], err_dict[err][1])
+    return reply.encode('utf-8')
 
 
-def response_ok():
+def response_ok(body):
     """Return formatted 200 OK HTTP response as byte string."""
-    return b"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\ngreat message\r\n\r\n"
-
+    body
+    try:
+        content_length = len(body.encode('utf-8'))
+    except AttributeError:
+        content_length = len(body)
+    reply = b"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: " + str(content_length).encode('utf-8') + b"\r\n\r\n" + body.encode('utf-8') + b"\r\n\r\n"
+    return reply
 
 if __name__ == "__main__":
     server()

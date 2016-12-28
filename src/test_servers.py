@@ -55,7 +55,7 @@ def test_test_request_good_req():
 def test_test_request_bad_req(req):
     """Test test_requrest() witih an improperly formatted HTTP message."""
     from server import parse_request
-    assert parse_request(req) is None
+    assert parse_request(req) == "400"
 
 
 def test_response_ok():
