@@ -7,6 +7,7 @@ import mimetypes
 
 
 def server():
+    serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
     port = 5001
     address = ('127.0.0.1', port)
     serv.bind(address)
@@ -22,7 +23,7 @@ def server():
             buffer_length = 10
 
             while True:
-                part = socket.recv(buffer_length)
+                part = conn.recv(buffer_length)
                 req_string += part.decode('utf-8')
                 if req_string[-4:] == u"\r\n\r\n" or req_string[-8:] == u"\\r\\n\\r\\n":
                     break
@@ -131,7 +132,7 @@ def response_ok(content):
         content_length = len(body.encode('utf-8'))
     except AttributeError:
         content_length = len(body)
-    reply = b"HTTP/1.1 200 OK\r\nContent-Type: " + content_type.encode('utf-8') + b"\r\nContent-Length: " + str(content_length).encode('utf-8') + b"\r\n" + body + b"\r\n\r\n"
+    reply = b"HTTP/1.1 200 OK\r\nContent-Type: " + content_type.encode('utf-8') + b"\r\nContent-Length: " + str(content_length).encode('utf-8') + b"\r\n\r\n" + body + b"\r\n\r\n"
     return reply
 
 if __name__ == "__main__":
