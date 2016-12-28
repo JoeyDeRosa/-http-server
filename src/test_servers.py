@@ -21,7 +21,7 @@ def test_request_good_req():
 
 
 @pytest.mark.parametrize("req", TEST_PARAMS)
-def test_test_request_bad_req(req):
-    """Test test_requrest() witih an improperly formatted HTTP message."""
+def test_test_request_any_req(req):
+    """Functional test for a variety of mesaages."""
     from client import client
     assert client(req)[9:12] == "200"
