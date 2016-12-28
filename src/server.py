@@ -3,6 +3,7 @@
 from __future__ import print_function
 import socket
 import os
+import mimetypes
 
 
 def server():
@@ -16,7 +17,7 @@ def server():
     while True:
         conn, addr = serv.accept()
         try:
-           req_result = "500"
+            req_result = "500"
             req_string = u''
             buffer_length = 10
 
