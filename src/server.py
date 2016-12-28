@@ -1,28 +1,34 @@
 """Server for Echo server assignment."""
+# -*- coding: utf-8 -*-
 
-
+from __future__ import unicode_literals
+from __future__ import print_function
 import socket
 
 
 def server():
     serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
-    address = ('127.0.0.1', 5000)
+    port = 5005
+    address = ('127.0.0.1', port)
     serv.bind(address)
 
     serv.listen(1)
+    print("Listening on: ", port)
 
     while True:
         conn, addr = serv.accept()
         try:
+            req_string = b''
             buffer_length = 10
-            echo = u''
-            while echo[-2:] != u"\r\n":
-                part = conn.recv(buffer_length)
-                echo += part.decode('utf8')
-                print("Received: ", part)
 
-            print("Sending: ", echo)
-            conn.sendall(echo.encode('utf8'))
+            while True:
+                part = conn.recv(buffer_length)
+                req_string += part
+                if len(part) < buffer_length:
+                    break
+
+            conn.sendall(req_string)
+
             print('waiting')
             conn.close()
 
@@ -32,4 +38,6 @@ def server():
     conn.close()
     serv.close()
 
-server()
+
+if __name__ == "__main__":
+    server()

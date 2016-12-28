@@ -1,37 +1,21 @@
 """This modulet tests the client and server modules for the CF 401 Python HTTP-Server assignment."""
+# -*- coding: utf-8 -*-
 
-# Test the following:
-# messages shorter than one buffer in length
-# messages longer than several buffers in length
-# messages that are an exact multiple of one buffer in length
-# messages containing non-ascii characters
+from __future__ import unicode_literals
+import pytest
 
-def test_client_short():
-    """Test with message shorter than one buffer length."""
+
+# buffer length is 10
+TEST_PARAMS = [
+    "Try this..",
+    "This statement is much longer than one buffer length.",
+    "This statement £includes non-ASCII §characters.®",
+    "Try this..Try this..Try this.."
+]
+
+
+@pytest.mark.parametrize("req", TEST_PARAMS)
+def test_test_request_any_req(req):
+    """Functional test for a variety of mesaages."""
     from client import client
-    test_msg = "twerp"
-    return client(test_msg) == u"twerp"
-
-def test_client_long():
-    """Test with message longer than several buffers in length."""
-    from client import client
-    test_msg = "This is a very long test message."
-    return client(test_msg) == test_msg
-
-def test_client_exact_buffer():
-    """Test messages that are an exact multiple of one buffer in length."""
-    from client import client
-    test_msg = "abcdefghij"
-    return client(test_msg) == test_msg
-
-
-def test_client_non_ASCII():
-    """Test messages that contain non ASCII characters."""
-    from client import client
-
-
-def run_tests():
-    """Run all tests with one funtion call."""
-    test_client_short()
-    test_client_long()
-    test_client_exact_buffer()
+    assert client(req) == req
