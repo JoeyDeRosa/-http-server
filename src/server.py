@@ -1,33 +1,41 @@
 """Server for Echo server assignment."""
-# encoding: utf-8
+# -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
 from __future__ import print_function
 import socket
 
 
 def server():
-    """Simple server to receive and echo messages."""
     serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
-    port = 5000
+    port = 5005
     address = ('127.0.0.1', port)
     serv.bind(address)
 
     serv.listen(1)
-    print("Listening on port: ", port)
+    print("Listening on: ", port)
 
     while True:
         conn, addr = serv.accept()
         try:
             req_string = b''
             buffer_length = 10
-            while req_string[-4:] != b"\r\n\r\n":
+
+            while True:
                 part = conn.recv(buffer_length)
                 req_string += part
+                if len(part) < buffer_length:
+                    break
 
-            print("Testing, ", req_string)
-            if test_request(req_string):
-                conn.sendall(response_ok())
+            req_string = req_string.decode('utf-8')
+            if "\\r\\n" in req_string:
+                req_string = req_string.replace("\\r\\n", "\r\n")
+
+            conn.sendall(response_ok())
+            if req_string[0] == '`':
+                print("Received: \n", req_string[1:])
             else:
-                conn.sendall(response_err())
+                print("Received: \n", req_string)
 
             print('waiting')
             conn.close()
@@ -39,36 +47,24 @@ def server():
     serv.close()
 
 
-def test_request(test_string):
-    """Test HTTP requests for valid format."""
-    method_list = ['GET', 'POST', 'PUT', 'DELETE']
-    end_list = ['HTTP/1.1', 'HTTP/1.0']
-    test_string = test_string.decode('utf8')
-    test_line = test_string.split('\r\n')
-    print(test_line)
-    test_section = test_line[0].split(' ')
-    print(test_section)
-    if test_section[0] not in method_list:
-        print("bad method")
-        return False
-    elif str(test_section[1])[0] is not '/':
-        print("bad URI")
-        return False
-    elif test_section[2] not in end_list:
-        print("bad protocol")
-        return False
-    return True
-
-
-def response_err():
+def response_err(err):
     """Return formatted 500 error HTTP response as byte string."""
-    return b"HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/plain\r\n\r\nBAD message\r\n\r\n"
+    if type(err) != str:
+        err = err.decode('utf-8')
+    err_dict = {
+        "500": ("Internal Server Error", "Invalid HTTP request."),
+        "404": ("File Not Found", "That resource does not exist."),
+        "403": ("Forbidden", "Access not allowed."),
+        "400": ("Bad Request", "The request could not be understood by the server.")
+    }
+
+    reply = "HTTP/1.1 {0} {1}\r\nContent-Type: text/plain\r\n\r\n{2}\r\n\r\n".format(err, err_dict[err][0], err_dict[err][1])
+    return reply.encode('utf-8')
 
 
 def response_ok():
     """Return formatted 200 OK HTTP response as byte string."""
-    return b"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\ngreat message\r\n\r\n"
-
+    return b"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 4\r\n\r\nTEST\r\n\r\n"
 
 if __name__ == "__main__":
     server()
