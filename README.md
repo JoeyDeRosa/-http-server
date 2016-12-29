@@ -4,10 +4,10 @@ The goal of this assignment was to write a basic but functional HTTP server.
 
 #Summary
 
-The assignment was to implement a simple HTTP Server.  A user should be able to send a formatted GET request through the client via the command line and receive a formatted response from the server.
+The assignment was to implement a simple HTTP Server.  A user should be able to send any message to the server and receive a properly formatted HTTP 200 Response.
 
 
-For more information on the assignment, see here: https://codefellows.github.io/sea-python-401d5/assignments/http_server_final.html
+For more information on the assignment, see here: https://codefellows.github.io/sea-python-401d5/assignments/http_server_1.html
 
 
 
