@@ -8,12 +8,12 @@ setup(
     author_email="",
     license="MIT",
     package_dir={'': 'src'},
-    py_modules=["linkedlist"],
+    py_modules=["server", "client"],
     install_requires=[],
     extras_require={"test": ["pytest", "pytest-watch", "pytest-cov", "tox"]},
-    # entry_points={
-    #     'console_scripts': [
-    #         "linked_list = linked_list:main"
-    #     ]
-    # }
+    entry_points={
+        'console_scripts': [
+            "client = client:client"
+        ]
+    }
 )
