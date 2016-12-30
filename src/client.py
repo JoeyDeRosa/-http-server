@@ -7,7 +7,7 @@ import sys
 import socket
 
 
-def client(message=sys.argv[1]):
+def client(message):
     """Send given message to server and recover any reply."""
     infos = socket.getaddrinfo('127.0.0.1', 5005)
     stream_info = [i for i in infos if i[1] == socket.SOCK_STREAM][0]
@@ -37,7 +37,13 @@ def client(message=sys.argv[1]):
         msg_reply = msg_reply[1:]
 
     clnt.close()
+    print("Received: ", msg_reply)
     return msg_reply
+
+
+def main():
+    """Pass system arguments to client."""
+    client(sys.argv[1])
 
 
 if __name__ == "__main__":

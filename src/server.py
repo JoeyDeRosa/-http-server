@@ -27,6 +27,7 @@ def server():
                 if len(part) < buffer_length:
                     break
 
+            print("Sending: ", req_string)
             conn.sendall(req_string)
 
             print('waiting')
